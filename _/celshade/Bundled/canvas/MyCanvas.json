@@ -1,1 +1,0 @@
-{"name":"untitled","x":0,"y":0,"width":960,"height":540,"elements":[{"id":0,"type":1,"name":"Image","event":"","x":448,"y":218,"width":64,"height":64,"text":"Image","asset":"aim.png","color":-1,"anchor":4,"children":[]}],"assets":[{"name":"aim.png","file":"../../Assets/aim.png","id":0},{"name":"ui_persp.png","file":"../../Assets/ui_persp.png","id":1}]}
