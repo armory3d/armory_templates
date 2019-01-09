@@ -1,4 +1,3 @@
-// Warning: not final code yet, to be cleaned up!
 package arm;
 
 import iron.math.Vec4;
@@ -21,6 +20,7 @@ class ThirdPersonController extends CameraController {
 	static inline var rotationSpeed = 1.0;
 	
 	var stepTime = 0.0;
+	var turnTime = 0.0;
 	var soundStep0:kha.Sound = null;
 	var soundStep1:kha.Sound = null;
 
@@ -28,6 +28,7 @@ class ThirdPersonController extends CameraController {
 	var zVec = Vec4.zAxis();
 	var angle = 0.0;
 	var nextFrameRot = 0.0;
+	var armature:Object;
 	var anim:BoneAnimation;
 	var q = new Quat();
 	var mat = Mat4.identity();
@@ -36,6 +37,7 @@ class ThirdPersonController extends CameraController {
 	var firingTime = 0.0;
 	var speed = 1.0;
 	var dir = new Vec4();
+	var lastLook:Vec4;
 	var state = "idle";
 
 	public function new() {
@@ -56,8 +58,10 @@ class ThirdPersonController extends CameraController {
 				soundStep1 = sound;
 			});
 
-			anim = findAnimation(object.getChild("Armature"));
+			armature = object.getChild("Armature");
+			anim = findAnimation(armature);
 			anim.notifyOnUpdate(updateBones);
+			lastLook = armature.transform.look().normalize();
 		});
 	}
 
@@ -93,7 +97,7 @@ class ThirdPersonController extends CameraController {
 		m1._31 = 0;
 		m1._32 = 0;
 		mat.getInverse(a1);
-		q.fromAxisAngle(mat.right(), angle);
+		q.fromAxisAngle(mat.right(), -angle);
 		m1.applyQuat(q);
 		m1._30 = tx;
 		m1._31 = ty;
@@ -108,7 +112,7 @@ class ThirdPersonController extends CameraController {
 		mat.getInverse(a2);
 		var v = mat.right();
 		v.mult(-1);
-		q.fromAxisAngle(v, -angle);
+		q.fromAxisAngle(v, angle);
 		m2.applyQuat(q);
 		m2._30 = tx;
 		m2._31 = ty;
@@ -123,7 +127,7 @@ class ThirdPersonController extends CameraController {
 			m1b._31 = 0;
 			m1b._32 = 0;
 			mat.getInverse(a1);
-			q.fromAxisAngle(mat.right(), angle);
+			q.fromAxisAngle(mat.right(), -angle);
 			m1b.applyQuat(q);
 			m1b._30 = tx;
 			m1b._31 = ty;
@@ -138,7 +142,7 @@ class ThirdPersonController extends CameraController {
 			mat.getInverse(a2);
 			var v = mat.right();
 			v.mult(-1);
-			q.fromAxisAngle(v, -angle);
+			q.fromAxisAngle(v, angle);
 			m2b.applyQuat(q);
 			m2b._30 = tx;
 			m2b._31 = ty;
@@ -176,6 +180,7 @@ class ThirdPersonController extends CameraController {
 
 	function update() {
 		if (!body.ready) return;
+		var look = armature.transform.look().normalize();
 
 		// Move
 		dir.set(0, 0, 0);
@@ -189,10 +194,10 @@ class ThirdPersonController extends CameraController {
 		body.setLinearVelocity(0.0, 0.0, btvec.z - 1.0);
 
 		if (moveForward || moveBackward || moveLeft || moveRight) {
-			if (state != "run") {
-				state = "run";
-				anim.play(state, null, 0.2);
-			}
+			var action = moveForward  ? "run"  :
+						 moveBackward ? "back" :
+						 moveLeft     ? "left" : "right";
+			setState(action);
 
 			var kb = iron.system.Input.getKeyboard();
 			if (kb.down("shift")) speed = 1.6;
@@ -203,31 +208,28 @@ class ThirdPersonController extends CameraController {
 			body.setLinearVelocity(dir.x, dir.y, btvec.z - 1.0);
 
 			stepTime += Time.delta;
-			if (stepTime > 0.3 / speed) {
+			if (stepTime > 0.38 / speed) {
 				stepTime = 0;
 				Audio.play(Std.random(2) == 0 ? soundStep0 : soundStep1);
 			}
 		}
 		// Play correct state
-		else if (state != "fire" || state != "idle") {
+		else if (state != "fire" || state != "idle" || state != "turn") {
 			var mouse = iron.system.Input.getMouse();
 			if (mouse.down("left")) {
 				firingTime = 0.0;
-				if (state != "fire") {
-					state = "fire";
-					anim.play(state, null, 0.2, 2.0);
-				}
+				setState("fire", 2.0);
 			}
 			else {
-				if (state != "idle" && state == "run") {
-					state = "idle";
-					anim.play(state, null, 0.2, 2.0);
-				}
-
-				if (state != "idle" && state == "fire" && firingTime > 0.1) {
-					state = "idle";
-					anim.play(state, null, 0.2, 2.0);
-				}
+				// var angle = getAngle(look, lastLook);
+				// if (Math.abs(angle) > 0.01) {
+					// setState("turn", angle > 0 ? 1 : -1, 0);
+					// turnTime = 0;
+				// }
+				// else if (turnTime > 0.25){
+					setState("idle", 2.0);
+				// }
+				// else turnTime += Time.delta;
 			}
 		}
 
@@ -237,6 +239,26 @@ class ThirdPersonController extends CameraController {
 		// Keep vertical
 		body.setAngularFactor(0, 0, 0);
 		camera.buildMatrix();
+
+		lastLook.setFrom(look);
+	}
+
+	// function getAngle(va:Vec4, vb:Vec4) {
+	// 	var vn = Vec4.zAxis();
+	// 	var dot = va.dot(vb);
+	// 	var det = va.x * vb.y * vn.z +
+	// 			  vb.x * vn.y * va.z +
+	// 			  vn.x * va.y * vb.z -
+	// 			  va.z * vb.y * vn.x -
+	// 			  vb.z * vn.y * va.x -
+	// 			  vn.z * va.y * vb.x;
+	// 	return Math.atan2(det, dot);
+	// }
+
+	function setState(s:String, speed = 1.0, blend = 0.2) {
+		if (s == state) return;
+		state = s;
+		anim.play(s, null, blend, speed);
 	}
 #end
 }

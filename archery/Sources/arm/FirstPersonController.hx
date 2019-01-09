@@ -82,8 +82,8 @@ class FirstPersonController extends CameraController {
 
 	function updateBones() {
 		// Fetch bone
-		var bone1 = anim.getBone("LeftForeArm");
-		var bone2 = anim.getBone("RightForeArm");
+		var bone1 = anim.getBone("mixamorig:LeftForeArm");
+		var bone2 = anim.getBone("mixamorig:RightForeArm");
 		// Fetch bone matrix - this is in local bone space for now
 		var m1 = anim.getBoneMat(bone1);
 		var m2 = anim.getBoneMat(bone2);
