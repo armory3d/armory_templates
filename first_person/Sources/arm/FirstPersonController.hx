@@ -34,6 +34,7 @@ class FirstPersonController extends CameraController {
 	var mat = Mat4.identity();
 
 	var nextIdle = false;
+	var jumpTime = 0.0;
 	var firingTime = 0.0;
 	var speed = 1.0;
 	var dir = new Vec4();
@@ -184,6 +185,15 @@ class FirstPersonController extends CameraController {
 	function update() {
 		if (!body.ready) return;
 		var look = armature.transform.look().normalize();
+
+		if (jump) {
+			if (jumpTime >= 0.4){
+				body.applyImpulse(new Vec4(0, 0, 16));
+				jumpTime = 0;
+				jump = false;
+			}
+		}
+		jumpTime += Time.delta;
 
 		// Move
 		dir.set(0, 0, 0);
