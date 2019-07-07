@@ -4,7 +4,6 @@ import iron.math.Vec4;
 import iron.math.Vec2;
 import iron.math.RayCaster;
 import iron.Scene;
-import armory.trait.physics.PhysicsWorld;
 import iron.object.Object;
 import iron.object.BoneAnimation;
 import iron.system.Time;
@@ -101,8 +100,7 @@ class PlayerController extends iron.Trait {
 
 		var start = new Vec4();
 		var end = new Vec4();
-
-		var physics = PhysicsWorld.active;
+		
 		var hit_pos = RayCaster.planeIntersect(Vec4.zAxis(),new Vec4(0,0,1),input.x,input.y,camera);
 		return hit_pos;
 	}
