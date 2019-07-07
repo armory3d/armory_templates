@@ -1,6 +1,10 @@
 package arm;
 
 import iron.math.Vec4;
+import iron.math.Vec2;
+import iron.math.RayCaster;
+import iron.Scene;
+import armory.trait.physics.PhysicsWorld;
 import iron.object.Object;
 import iron.object.BoneAnimation;
 import iron.system.Time;
@@ -66,11 +70,19 @@ class PlayerController extends iron.Trait {
 		dir.normalize();
 
 		// Mouse control
-		var mx = -(iron.App.w() / 2 - mouse.x) / iron.App.w();
-		var my = (iron.App.h() / 2 - mouse.y) / iron.App.h();
-		var mv = new Vec4(mx * 2, my * 2, 0.0);
-		mv.normalize();
-		armature.transform.rot.fromTo(Vec4.yAxis(), mv);
+		var mouse_pos = new Vec2(mouse.x,mouse.y);
+		var hit_pos = project_mouse_pos(mouse_pos);
+
+		if (hit_pos != null)
+		{
+			var center = new Vec4(hit_pos.x,hit_pos.y,0);
+			var eye = armature.transform.world.getLoc();
+			eye.set(eye.x,eye.y,0);
+
+			var target = center.sub(eye);
+
+			armature.transform.rot.fromTo(Vec4.yAxis(), target.normalize());
+		}
 
 		// Gamepad control
 		if (gamepad != null) {
@@ -82,6 +94,17 @@ class PlayerController extends iron.Trait {
 		armature.transform.buildMatrix();
 		updateAnim();
 		updateBody();
+	}
+
+	function project_mouse_pos(input:Vec2){
+		var camera = Scene.active.camera;
+
+		var start = new Vec4();
+		var end = new Vec4();
+
+		var physics = PhysicsWorld.active;
+		var hit_pos = RayCaster.planeIntersect(Vec4.zAxis(),new Vec4(0,0,1),input.x,input.y,camera);
+		return hit_pos;
 	}
 
 	function getAngle(va:Vec4, vb:Vec4) {
