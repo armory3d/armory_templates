@@ -2,6 +2,7 @@ package arm;
 
 import iron.Scene;
 import iron.object.Transform;
+using armory.object.TransformExtension;
 
 class TrackTimer extends iron.Trait {
 
