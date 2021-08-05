@@ -1,0 +1,79 @@
+name: top_down
+
+on:
+  push:
+    paths:
+      - top_down/**
+      - .github/workflows/top_down.yml
+
+jobs:
+  html5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: tong/armory_gh_actions@v0.0.32
+        with:
+          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          exporter: html5
+      - name: Deploy gh-pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: ${{ github.workflow }}/build_${{ github.workflow }}/html5
+          target-folder: ${{ github.workflow }}
+  krom-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: tong/armory_gh_actions@v0.0.32
+        with:
+          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          exporter: krom-linux
+  linux-hl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: tong/armory_gh_actions@v0.0.32
+        with:
+          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          exporter: linux-hl
+  android-hl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: tong/armory_gh_actions@v0.0.32
+        with:
+          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          exporter: android-hl
+  windows-hl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: tong/armory_gh_actions@v0.0.32
+        with:
+          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          exporter: windows-hl
+  macos-hl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: tong/armory_gh_actions@v0.0.32
+        with:
+          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          exporter: macos-hl
+  ios-hl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: tong/armory_gh_actions@v0.0.32
+        with:
+          blend: ${{ github.workflow }}/${{ github.workflow }}.blend
+          exporter: ios-hl
+ 
