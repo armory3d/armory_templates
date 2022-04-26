@@ -1,7 +1,7 @@
 {
     "rp_bloom": true,
     "rp_dynres": false,
-    "rp_gi": true,
+    "rp_gi": false,
     "rp_motionblur": false,
     "rp_shadowmap_cascade": 1024,
     "rp_shadowmap_cube": 512,
