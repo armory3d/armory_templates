@@ -1,5 +1,7 @@
 # armory_templates
 
-Templates to accompany Armory SDK. Check out the [manual](https://github.com/armory3d/armory/wiki).
+Here are some basic templates to compliment the [Armory SDK](https://github.com/armory3d/armsdk/releases).<br />
+Check out the official [Armory Manual](https://github.com/armory3d/armory/wiki).
 
-Note: Download the package from [releases](https://github.com/armory3d/armory_templates/releases). Only use the latest revision of this repository if you are using [git Armory](https://github.com/armory3d/armory/wiki/gitversion).
+**Note:** Download the last stable, templates package from [here](https://github.com/armory3d/armory_templates/releases).<br />
+Only use the latest revision of this repository if you're using [GIT Armory](https://github.com/armory3d/armory/wiki/gitversion).
