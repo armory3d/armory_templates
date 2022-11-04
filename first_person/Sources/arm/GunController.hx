@@ -21,22 +21,19 @@ class GunController extends Trait {
 	var firePoint:Transform;
 	var fireStrength = 25;
 	var lastFire = 0.0;
+
 	var soundFire0:kha.Sound = null;
 	var soundFire1:kha.Sound = null;
+	var soundsLoaded = 0;
 
 	public function new() {
 		super();
-		
+
+		iron.data.Data.getSound("fire0.wav", function(sound:kha.Sound) { soundFire0 = sound; soundsLoaded++; });
+		iron.data.Data.getSound("fire1.wav", function(sound:kha.Sound) { soundFire1 = sound; soundsLoaded++; });
+
 		notifyOnInit(function() {
 			firePoint = object.getChild("ProjectileSpawn").transform;
-
-			iron.data.Data.getSound("fire0.wav", function(sound:kha.Sound) {
-				soundFire0 = sound;
-			});
-
-			iron.data.Data.getSound("fire1.wav", function(sound:kha.Sound) {
-				soundFire1 = sound;
-			});
 		});
 		
 		notifyOnUpdate(function() {
@@ -44,7 +41,9 @@ class GunController extends Trait {
 			lastFire += Time.delta;
 			if ((mouse.down("left") && lastFire > fireFreq) || mouse.started("left")) {
 				shoot();
-				Audio.play(Std.random(3) == 0 ? soundFire1 : soundFire0);
+				if (soundsLoaded == 2) {
+					Audio.play(Std.random(3) == 0 ? soundFire1 : soundFire0);
+				}
 				lastFire = 0.0;
 			}
 		});

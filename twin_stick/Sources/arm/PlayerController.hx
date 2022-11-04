@@ -19,6 +19,7 @@ class PlayerController extends iron.Trait {
 	
 	var soundStep0:kha.Sound = null;
 	var soundStep1:kha.Sound = null;
+	var soundsLoaded = 0;
 
 	var mouse:Mouse = null;
 	var keyboard:Keyboard = null;
@@ -36,6 +37,11 @@ class PlayerController extends iron.Trait {
 
 	public function new() {
 		super();
+
+		// Load sounds
+		iron.data.Data.getSound("step0.wav", function(sound:kha.Sound) { soundStep0 = sound; soundsLoaded++; });
+		iron.data.Data.getSound("step1.wav", function(sound:kha.Sound) { soundStep1 = sound; soundsLoaded++; });
+
 		notifyOnInit(init);
 		notifyOnUpdate(update);
 	}
@@ -51,10 +57,6 @@ class PlayerController extends iron.Trait {
 		armature = object.getChild("Armature");
 		anim = cast armature.children[0].animation;
 		lastLook = armature.transform.look().normalize();
-
-		// Load sounds
-		iron.data.Data.getSound("step0.wav", function(sound:kha.Sound) { soundStep0 = sound; });
-		iron.data.Data.getSound("step1.wav", function(sound:kha.Sound) { soundStep1 = sound; });
 	}
 
 	function update() {
@@ -139,7 +141,9 @@ class PlayerController extends iron.Trait {
 			stepTime += Time.delta;
 			if (stepTime > 0.3) {
 				stepTime = 0;
-				Audio.play(Std.random(2) == 0 ? soundStep0 : soundStep1);
+				if (soundsLoaded == 2) {
+					Audio.play(Std.random(2) == 0 ? soundStep0 : soundStep1);
+				}
 			}
 		}
 		// Shoot

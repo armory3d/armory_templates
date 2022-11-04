@@ -32,9 +32,18 @@ class PlayerController extends iron.Trait {
 	var soundStep1:kha.Sound = null;
 	var soundSword0:kha.Sound = null;
 	var soundSword1:kha.Sound = null;
+	var stepSoundsLoaded = 0;
+	var swordSoundsLoaded = 0;
 
 	public function new() {
 		super();
+
+		// Load sounds
+		iron.data.Data.getSound("step0.wav", function(sound:kha.Sound) { soundStep0 = sound; stepSoundsLoaded++; });
+		iron.data.Data.getSound("step1.wav", function(sound:kha.Sound) { soundStep1 = sound; stepSoundsLoaded++; });
+		iron.data.Data.getSound("sword0.wav", function(sound:kha.Sound) { soundSword0 = sound; swordSoundsLoaded++; });
+		iron.data.Data.getSound("sword1.wav", function(sound:kha.Sound) { soundSword1 = sound; swordSoundsLoaded++; });
+
 		notifyOnInit(init);
 		notifyOnUpdate(update);
 	}
@@ -49,12 +58,6 @@ class PlayerController extends iron.Trait {
 		body = object.getTrait(RigidBody);
 		armature = object.getChild("Armature");
 		anim = cast armature.children[0].animation;
-
-		// Load sounds
-		iron.data.Data.getSound("step0.wav", function(sound:kha.Sound) { soundStep0 = sound; });
-		iron.data.Data.getSound("step1.wav", function(sound:kha.Sound) { soundStep1 = sound; });
-		iron.data.Data.getSound("sword0.wav", function(sound:kha.Sound) { soundSword0 = sound; });
-		iron.data.Data.getSound("sword1.wav", function(sound:kha.Sound) { soundSword1 = sound; });
 	}
 
 	function update() {
@@ -91,7 +94,9 @@ class PlayerController extends iron.Trait {
 			stepTime += Time.delta;
 			if (stepTime > 0.3) {
 				stepTime = 0;
-				Audio.play(Std.random(2) == 0 ? soundStep0 : soundStep1);
+				if (stepSoundsLoaded == 2) {
+					Audio.play(Std.random(2) == 0 ? soundStep0 : soundStep1);
+				}
 			}
 		}
 		// Slash
@@ -100,7 +105,9 @@ class PlayerController extends iron.Trait {
 				var r = Std.random(2);
 				setState(r == 0 ? "slash" : "slash2", 1.5, 0.0, function() { setState("idle", 1.0, 0.0); });
 				iron.system.Tween.timer(0.3, function() {
-					Audio.play(r == 0 ? soundSword0 : soundSword1);
+					if (swordSoundsLoaded == 2) {
+						Audio.play(r == 0 ? soundSword0 : soundSword1);
+					}
 				});
 			}
 		} 
