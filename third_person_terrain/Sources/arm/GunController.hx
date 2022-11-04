@@ -35,7 +35,7 @@ class GunController extends Trait {
 		notifyOnInit(function() {
 			firePoint = object.getChild("ProjectileSpawn").transform;
 		});
-		
+
 		notifyOnUpdate(function() {
 			var mouse = Input.getMouse();
 			lastFire += Time.delta;

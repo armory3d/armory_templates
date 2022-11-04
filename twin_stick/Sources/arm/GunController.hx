@@ -31,11 +31,11 @@ class GunController extends Trait {
 
 		var mouse = Input.getMouse();
 		var gamepad = Input.getGamepad(0);
-		
+
 		notifyOnInit(function() {
 			firePoint = object.getChild('ProjectileSpawn').transform;
 		});
-		
+
 		notifyOnUpdate(function() {
 			lastFire += Time.delta;
 			if (lastFire > fireFreq) {

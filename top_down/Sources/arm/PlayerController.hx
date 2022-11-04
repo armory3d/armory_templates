@@ -110,7 +110,7 @@ class PlayerController extends iron.Trait {
 					}
 				});
 			}
-		} 
+		}
 		// Idle
 		else if (state != "slash" && state != "slash2") {
 			setState("idle", 1.0);
@@ -119,7 +119,7 @@ class PlayerController extends iron.Trait {
 
 	function updateBody() {
 		if (!body.ready) return;
-		
+
 		body.syncTransform();
 		body.activate();
 		var linvel = body.getLinearVelocity();

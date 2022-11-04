@@ -16,7 +16,7 @@ class PlayerController extends iron.Trait {
 #if (!arm_physics)
 	public function new() { super(); }
 #else
-	
+
 	var soundStep0:kha.Sound = null;
 	var soundStep1:kha.Sound = null;
 	var soundsLoaded = 0;
@@ -102,7 +102,7 @@ class PlayerController extends iron.Trait {
 
 		var start = new Vec4();
 		var end = new Vec4();
-		
+
 		var hit_pos = RayCaster.planeIntersect(Vec4.zAxis(),new Vec4(0,0,1),input.x,input.y,camera);
 		return hit_pos;
 	}
@@ -168,7 +168,7 @@ class PlayerController extends iron.Trait {
 
 	function updateBody() {
 		if (!body.ready) return;
-		
+
 		body.syncTransform();
 		body.activate();
 		var linvel = body.getLinearVelocity();

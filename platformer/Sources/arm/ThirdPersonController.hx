@@ -18,7 +18,7 @@ class ThirdPersonController extends CameraController {
 #else
 
 	static inline var rotationSpeed = 1.0;
-	
+
 	var stepTime = 0.0;
 	var soundStep0:kha.Sound = null;
 	var soundStep1:kha.Sound = null;
@@ -44,7 +44,7 @@ class ThirdPersonController extends CameraController {
 		notifyOnInit(function() {
 			PhysicsWorld.active.notifyOnPreUpdate(preUpdate);
 			notifyOnUpdate(update);
-			
+
 			notifyOnRemove(function() {
 				PhysicsWorld.active.removePreUpdate(preUpdate);
 			});
@@ -65,13 +65,13 @@ class ThirdPersonController extends CameraController {
 
 	function preUpdate() {
 		if (Input.occupied || !body.ready) return;
-		
+
 		var mouse = Input.getMouse();
 		var kb = Input.getKeyboard();
-		
+
 		if (mouse.started() && !mouse.locked) mouse.lock();
 		else if (kb.started("escape") && mouse.locked) mouse.unlock();
-		
+
 		if (nextFrameRot != 0.0) {
 			var origin = object.getChild("CameraOrigin");
 			origin.transform.rotate(xVec, nextFrameRot);
