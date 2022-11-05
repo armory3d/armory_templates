@@ -18,10 +18,11 @@ class ThirdPersonController extends CameraController {
 #else
 
 	static inline var rotationSpeed = 1.0;
-	
+
 	var stepTime = 0.0;
 	var soundStep0:kha.Sound = null;
 	var soundStep1:kha.Sound = null;
+	var soundsLoaded = 0;
 
 	var xVec = Vec4.xAxis();
 	var zVec = Vec4.zAxis();
@@ -36,20 +37,16 @@ class ThirdPersonController extends CameraController {
 
 	public function new() {
 		super();
+
+		iron.data.Data.getSound("step0.wav", function(sound:kha.Sound) { soundStep0 = sound; soundsLoaded++; });
+		iron.data.Data.getSound("step1.wav", function(sound:kha.Sound) { soundStep1 = sound; soundsLoaded++; });
+
 		notifyOnInit(function() {
 			PhysicsWorld.active.notifyOnPreUpdate(preUpdate);
 			notifyOnUpdate(update);
-			
+
 			notifyOnRemove(function() {
 				PhysicsWorld.active.removePreUpdate(preUpdate);
-			});
-
-			iron.data.Data.getSound("step0.wav", function(sound:kha.Sound) {
-				soundStep0 = sound;
-			});
-
-			iron.data.Data.getSound("step1.wav", function(sound:kha.Sound) {
-				soundStep1 = sound;
 			});
 
 			armature = object.getChild("Armature");
@@ -68,13 +65,13 @@ class ThirdPersonController extends CameraController {
 
 	function preUpdate() {
 		if (Input.occupied || !body.ready) return;
-		
+
 		var mouse = Input.getMouse();
 		var kb = Input.getKeyboard();
-		
+
 		if (mouse.started() && !mouse.locked) mouse.lock();
 		else if (kb.started("escape") && mouse.locked) mouse.unlock();
-		
+
 		if (nextFrameRot != 0.0) {
 			var origin = object.getChild("CameraOrigin");
 			origin.transform.rotate(xVec, nextFrameRot);
@@ -122,7 +119,9 @@ class ThirdPersonController extends CameraController {
 			stepTime += Time.delta;
 			if (stepTime > 0.38 / speed) {
 				stepTime = 0;
-				Audio.play(Std.random(2) == 0 ? soundStep0 : soundStep1);
+				if (soundsLoaded == 2) {
+					Audio.play(Std.random(2) == 0 ? soundStep0 : soundStep1);
+				}
 			}
 		}
 		// Play correct state
